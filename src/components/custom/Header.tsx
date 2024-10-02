@@ -1,6 +1,4 @@
-import React from "react";
 import { Button } from "../ui/button";
-// import Logo from "/logo.svg";
 function Header() {
   return (
     <div className="p-3 shadow-sm flex justify-between items-center px-5">
