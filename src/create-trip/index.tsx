@@ -1,141 +1,126 @@
-import { useCallback, useMemo, useState } from "react";
-// import { GetCountries, GetState, GetCity } from "react-country-state-city";
-import stateData from "../../stateData.json";
-import countryData from "../../countryData.json";
-import cityData from "../../cityData.json";
-import { Country, State, CityDataArray, Suggestion } from "../types/types";
-import SearchInput from "@/components/custom/searchInput";
 import { Input } from "@/components/ui/input";
-import { SelectBudgetOption, SelectTravelersList } from "@/constants/options";
+import {
+  AI_PROMPT,
+  SelectBudgetOption,
+  SelectTravelersList,
+} from "@/constants/options";
 import { Button } from "@/components/ui/button";
-
-const countries: Country[] = countryData as Country[];
-const states: State[] = stateData;
-const cities: CityDataArray = cityData as CityDataArray;
+import CityDataWrapper from "@/components/custom/CityDataWrapper";
+import { useEffect, useState } from "react";
+import { FormData } from "@/types/types";
+import { toast } from "sonner";
+import { chatSession } from "@/service/AIModal";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+} from "@/components/ui/dialog";
+import { FcGoogle } from "react-icons/fc";
+import { TokenResponse, useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "@/service/FirebaseConfig";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 
 function CreateTrip() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [openDialog, setOpenDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState<FormData>({
+    budget: "",
+    travellers: "",
+    location: "",
+    noOfDays: "",
+  });
 
-  const countryMap: { [key: string]: string } = useMemo(() => {
-    const map: { [key: string]: string } = {};
-    countries.forEach((country: Country) => {
-      map[parseInt(country.id)] = country.name;
+  const handleInputChange = (key: string, value: string) => {
+    if (parseInt(formData.noOfDays) > 5) {
+      return;
+    }
+    setFormData({
+      ...formData,
+      [key]: value,
     });
-    return map;
-  }, []);
+  };
 
-  const stateMap: { [key: string]: State } = useMemo(() => {
-    const map: { [key: string]: State } = {};
-    states.forEach((state: State) => {
-      map[state.id] = state;
-    });
-    return map;
-  }, []);
+  const navigate = useNavigate();
 
-  const stateToCountryMap = useMemo(() => {
-    const map: { [key: string]: string } = {};
-    states.forEach((state) => {
-      const countryName = countryMap[state.countryCode];
-      if (countryName) {
-        map[state.id] = countryName;
-      }
-    });
-    return map;
-  }, [countryMap]);
-  const sortCopy = useCallback(
-    (arr: Suggestion[]) => {
-      const res = arr.slice(0).sort((a: Suggestion, b: Suggestion) => {
-        if (
-          a.name.toLowerCase() === searchTerm.toLowerCase() ||
-          a.name.toLowerCase().split(",").includes(searchTerm.toLowerCase())
-        )
-          return -1;
-        else if (
-          b.name.toLowerCase() === searchTerm.toLowerCase() ||
-          b.name.toLowerCase().split(",").includes(searchTerm.toLowerCase())
-        )
-          return 1;
-        else return 0;
-      });
-      return res;
-    },
-    [searchTerm]
-  );
-  const searchResult = useMemo(() => {
-    if (!searchTerm) return { countries: [], states: [], cities: [] };
+  useEffect(() => console.log("data form ", formData), [formData]);
 
-    const result = {
-      countries: [] as Suggestion[],
-      states: [] as Suggestion[],
-      cities: [] as Suggestion[],
-    };
+  useEffect(() => handleInputChange("location", searchTerm), [searchTerm]);
 
-    if (searchTerm.toLowerCase() === "goa") {
-      console.log();
+  const onGenerateTrip = async () => {
+    const user = localStorage.getItem("user");
+    if (!user) {
+      setOpenDialog(true);
+      return;
+    }
+    if (
+      (!(parseInt(formData.noOfDays) > 5) && !formData.location) ||
+      !formData.budget ||
+      !formData.travellers
+    ) {
+      toast("Please fill all details");
+      return;
     }
 
-    result.countries = sortCopy(
-      countries
-        .filter((country) =>
-          country.name.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-        .map(
-          (country) =>
-            ({ id: parseInt(country.id), name: country.name } as Suggestion)
-        )
-    ).slice(0, 5); // Limit to 5 results
+    setLoading(true);
+    const FINAL_PROMPT = AI_PROMPT.replace("{location}", formData.location)
+      .replace("{totalDays}", formData.noOfDays)
+      .replace("{budget}", formData.budget)
+      .replace("{traveler}", formData.travellers);
 
-    // Search in state names
-    result.states = sortCopy(
-      states
-        .filter((state) =>
-          state.name.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-        .map((state) => ({
-          id: state.id,
-          name: `${state.name}, ${stateToCountryMap[state.id] || "Unknown"}`,
-        }))
-    ).slice(0, 5); // Limit to 5 results
+    console.log(FINAL_PROMPT);
 
-    // Search in city names
-    result.cities = sortCopy(
-      cities.flatMap((city) =>
-        city.states.flatMap((state) => {
-          return state.cities
-            .filter((cityItem) =>
-              cityItem.name.toLowerCase().includes(searchTerm.toLowerCase())
-            )
-            .map((cityItem) => {
-              // Lookup state information from stateMap
-              const foundState = stateMap[state.id];
-              // Get the country name from stateToCountryMap using the state's id
-              const countryName = foundState
-                ? stateToCountryMap[state.id]
-                : "Unknown";
+    const result = await chatSession.sendMessage(FINAL_PROMPT);
+    console.log("result -< ", result.response.text());
+    setLoading(false);
+    saveAITrip(result.response.text());
+  };
+  const logIn = useGoogleLogin({
+    onSuccess: (codeResp) => getUserProfile(codeResp),
+    onError: (error) => console.log(error),
+  });
 
-              return {
-                id: cityItem.id,
-                name: `${cityItem.name}, ${
-                  foundState ? foundState.name : "Unknown"
-                }, ${countryName || "Unknown"}`,
-              };
-            });
-        })
+  const getUserProfile = (tokenInfo: TokenResponse) => {
+    axios
+      .get(
+        `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenInfo.access_token}`,
+        {
+          headers: {
+            Authorization: `Bearer ${tokenInfo.access_token}`,
+            Accept: "application/json",
+          },
+        }
       )
-    ).slice(0, 5); // Limit to 5 results
+      .then((resp) => {
+        console.log(resp);
+        localStorage.setItem("user", JSON.stringify(resp.data));
+        setOpenDialog(false);
+        onGenerateTrip();
+      })
+      .catch((e) => console.log(`Error : ${e}`));
+  };
 
-    return result;
-  }, [searchTerm, sortCopy, stateMap, stateToCountryMap]);
+  const saveAITrip = async (tripData: string) => {
+    setLoading(true);
+    const docId: string = Date.now().toString();
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-  const handleSuggestionClick = (suggestionName: string) => {
-    setSearchTerm(suggestionName); // Set the selected suggestion in the input field
-    searchResult.cities = [];
-    searchResult.states = [];
-    searchResult.countries = [];
+    await setDoc(doc(db, "AITrips", docId), {
+      userSelection: formData,
+      tripData: JSON.parse(tripData),
+      userEmail: user.email,
+      id: docId,
+    });
+    setLoading(false);
+    navigate(`/view-trip/${docId}`);
   };
 
   return (
-    <div className="sm:px-10 md:px-32 xl:px-10 lg:px-56 px-5 mt-10 flex flex-col justify-center align-middle mx-auto w-[75vw]">
+    <div className="px-[18vw] mt-10 flex flex-col justify-center align-middle mx-auto">
       <h2 className="font-bold text-3xl">
         Tell us your travel preferences 🏕️🚙
       </h2>
@@ -150,30 +135,9 @@ function CreateTrip() {
             What is your destination of choice?
           </h2>
           <div>
-            <SearchInput
-              suggestions={[
-                ...searchResult.cities.map((city) => ({
-                  id: city.id,
-                  name: city.name,
-                })),
-                ...searchResult.states.map((state) => ({
-                  id: state.id,
-                  name: state.name,
-                })),
-                ...searchResult.countries.map((country) => ({
-                  id: country.id,
-                  name: country.name,
-                })),
-              ].sort((a: Suggestion, b: Suggestion) => {
-                if (searchTerm.toLowerCase() === a.name.toLowerCase())
-                  return -1;
-                else if (searchTerm.toLowerCase() === b.name.toLowerCase())
-                  return 1;
-                else return 0;
-              })}
-              query={searchTerm}
-              handleInputChange={setSearchTerm}
-              handleSuggestionClick={handleSuggestionClick}
+            <CityDataWrapper
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
             />
           </div>
         </div>
@@ -182,7 +146,11 @@ function CreateTrip() {
             How many days are you planning your trip?
           </h2>
 
-          <Input placeholder={"e.g. 3"} type="number" />
+          <Input
+            placeholder={"e.g. 3"}
+            type="number"
+            onChange={(e) => handleInputChange("noOfDays", e.target.value)}
+          />
         </div>
         <div>
           <h2 className="text-xl my-3 font-medium">What is Your Budget?</h2>
@@ -190,7 +158,10 @@ function CreateTrip() {
             {SelectBudgetOption.map((item, index) => (
               <div
                 key={index}
-                className="p-4 border rounded-lg hover:shadow-lg cursor-pointer"
+                className={`p-4 border rounded-lg hover:shadow-lg cursor-pointer ${
+                  formData.budget == item.title && "shadow-lg border-black"
+                }`}
+                onClick={() => handleInputChange("budget", item.title)}
               >
                 <h2 className="text-4xl">{item.icon}</h2>
                 <h2 className="font-bold text-lg">{item.title}</h2>
@@ -207,7 +178,10 @@ function CreateTrip() {
             {SelectTravelersList.map((item, index) => (
               <div
                 key={index}
-                className="p-4 border rounded-lg hover:shadow-lg cursor-pointer"
+                className={`p-4 border rounded-lg hover:shadow-lg cursor-pointer ${
+                  formData.travellers == item.people && "shadow-lg border-black"
+                }`}
+                onClick={() => handleInputChange("travellers", item.people)}
               >
                 <h2 className="text-4xl">{item.icon}</h2>
                 <h2 className="font-bold text-lg">{item.title}</h2>
@@ -219,8 +193,31 @@ function CreateTrip() {
       </div>
 
       <div className="my-3 flex justify-end">
-        <Button>Generate Trip</Button>
+        <Button disabled={loading} onClick={onGenerateTrip}>
+          {loading ? (
+            <AiOutlineLoading3Quarters className="h-7 w-7 animate-spin" />
+          ) : (
+            "Generate Trip"
+          )}
+        </Button>
       </div>
+      <Dialog open={openDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogDescription>
+              <img src="/logo.svg" alt="Logo" />
+              <h2 className="font-bold text-lg mt-7">Sign In With Google</h2>
+              <p>Sign in to the app with Google Autentication securely.</p>
+              <Button
+                className="w-full mt-5 flex gap-4 items-center"
+                onClick={() => logIn()}
+              >
+                <FcGoogle className="w-7 h-7" /> Sign In with Google
+              </Button>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

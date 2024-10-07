@@ -30,7 +30,7 @@ export interface State {
 
 // City interface
 export interface City {
-  id: number;
+  id: string;
   name: string;
   latitude: string;
   longitude: string;
@@ -39,9 +39,9 @@ export interface City {
 
 // CityData interface to represent cityData.json structure
 export interface CityData {
-  id: number;
+  id: string;
   states: {
-    id: number;
+    id: string;
     cities: City[];
   }[];
 }
@@ -50,7 +50,7 @@ export interface CityData {
 export type CityDataArray = CityData[];
 
 export interface Suggestion {
-  id: number;
+  id: string;
   name: string;
 }
 
@@ -60,3 +60,71 @@ export interface SearchInputProps {
   handleInputChange: (value: string) => void;
   handleSuggestionClick: (value: string) => void;
 }
+
+export interface CityDataWrapperProps {
+  searchTerm: string;
+  setSearchTerm: (value: string) => void;
+}
+
+
+export interface PlaceMaps { [key: number]: string }
+
+export interface FormData {
+  budget: string;
+  travellers: string;
+  location: string;
+  noOfDays: string;
+}
+
+export type User = {
+  id: string;
+  email: string;
+  verified_email: boolean;
+  name: string;
+  given_name: string;
+  family_name: string;
+  picture: string;
+};
+
+export type TripPlan = {
+  time: string;
+  geoCoordinates: string;
+  travel: string;
+  placeName: string;
+  ticketPricing: string;
+  placeImageUrl: string;
+  placeDetails: string;
+};
+
+export type ItineraryDay = {
+  day: string;
+  plan: TripPlan[];
+};
+
+export type HotelOption = {
+  hotelName: string;
+  geoCoordinates: string;
+  description: string;
+  hotelImageUrl: string;
+  price: string;
+  rating: string;
+  hotelAddress: string;
+};
+
+export type UserSelection = {
+  budget: string;
+  location: string;
+  travellers: string;
+  noOfDays: string;
+};
+
+export type TripData = {
+  hotelOptions: HotelOption[];
+  itinerary: ItineraryDay[];
+};
+
+export type Trip = {
+  id: string;
+  userSelection: UserSelection;
+  tripData: TripData;
+};

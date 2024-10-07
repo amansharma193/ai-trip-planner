@@ -1,6 +1,6 @@
 import React from "react";
 import { Input } from "@/components/ui/input"; // Adjust the path based on your project structure
-import Dropdown from "@/components/custom/dropdown"; // Create a dropdown component if you don't have one
+import Dropdown from "@/components/custom/Dropdown"; // Create a dropdown component if you don't have one
 import { SearchInputProps } from "@/types/types";
 
 const SearchInput: React.FC<SearchInputProps> = ({
