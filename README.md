@@ -1,50 +1,33 @@
-# React + TypeScript + Vite
+# Global Trip Planner (AI Trip Planner)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🚀 **Introducing Global Trip Planner** 🌍✈️
 
-Currently, two official plugins are available:
+Tired of spending hours planning your perfect trip? Let **Global Trip Planner** do the work for you! Just provide a few basic details, and my powerful AI will generate a fully customized itinerary based on your preferences, so you can focus on enjoying your journey! 🌟
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## How It Works
 
-## Expanding the ESLint configuration
+- **AI-Powered**: Using **Gemini AI**, the app creates a personalized 5-day itinerary (more coming soon!) for your country, state, or city tour.
+- **Hotel Recommendations**: Get hotel options with price, address, and ratings. On click, you'll be redirected to **Google Maps** where you can see the current price and book your stay. 🏨📍
+- **Budget-Friendly**: Generate itineraries based on your budget—**cheap**, **moderate**, or **high**—and the size of your group, whether you're traveling **solo**, as a **couple**, with **family**, or with **friends**.
+- **Global Coverage**: Plan trips for all states and cities in over **200 countries**! 🌎
+- **Tech Stack**: Built with **React**, **Vite**, and **Shadcn** for a smooth and intuitive UI. Authentication is powered by **Google Auth**, and **Firebase** securely stores all your data.
+- **Future Enhancements**: I’ll soon be adding real images of places using the **Google Places API**, and more exciting features like advanced budget customizations, group-specific recommendations, travel tips, and other options to craft an even more personalized experience! But for now, enjoy the sample images! (Google Cloud billing in progress 🔧)
+- **Convenient**: Your past itineraries are saved for quick and easy access whenever you need them.
+- **Free to Use**: Yes, you can use **Global Trip Planner** absolutely **free**! 🎉
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Why Choose Global Trip Planner?
 
-- Configure the top-level `parserOptions` property like this:
+Why waste time planning when **Global Trip Planner** can handle it for you? Optimize your time, explore more, and travel without confusion! 🌍🗺️
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Get Started
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+Check it out here:  
+🔗 **Live App**: [GLOBAL_TOUR_PLANNER](https://globaltourplanner.vercel.app/)
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+Happy travels! ✈️💼
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+## Hashtags
+
+#GlobalTripPlanner #AITripPlanner #HotelRecommendations #TravelSmart #TravelAI #ItineraryMadeEasy #BudgetTravel #SoloTravel #FamilyTravel #FriendsTravel #React #Vite #Shadcn #GoogleAuth #Firebase #GeminiAI #FreeToUse #Vercel #TravelPlanning #TechInnovation #TravelWithEase
+
+![Global Trip Planner Logo](https://github.com/amansharma193/ai-trip-planner/blob/master/public/landing.png?raw=true)
