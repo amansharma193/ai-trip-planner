@@ -20,13 +20,18 @@ function CityDataWrapper({ searchTerm, setSearchTerm }: CityDataWrapperProps) {
     }));
   }, [searchTerm])
 
+  const handleSuggestionClick = (suggestionName: string) => {
+    setSearchTerm(suggestionName);
+    setStringArray([]);
+  }
+
 
   return (
     <SearchInput
       suggestions={stringArray.map(name => ({ id: name, name }))}
       query={searchTerm}
       handleInputChange={setSearchTerm}
-      handleSuggestionClick={(suggestionName) => setSearchTerm(suggestionName)}
+      handleSuggestionClick={handleSuggestionClick}
     />
   );
 }
