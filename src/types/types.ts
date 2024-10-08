@@ -59,6 +59,8 @@ export interface SearchInputProps {
   query: string;
   handleInputChange: (value: string) => void;
   handleSuggestionClick: (value: string) => void;
+  isDropdownOpen: boolean;
+  closeDropdown: () => void;
 }
 
 export interface CityDataWrapperProps {

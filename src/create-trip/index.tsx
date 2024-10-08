@@ -6,7 +6,9 @@ import {
 } from "@/constants/options";
 import { Button } from "@/components/ui/button";
 import { lazy, Suspense, useCallback, useEffect, useState } from "react";
-const CityDataWrapper = lazy(() => import("@/components/custom/CityDataWrapper"));
+const CityDataWrapper = lazy(
+  () => import("@/components/custom/CityDataWrapper")
+);
 import { FormData } from "@/types/types";
 import { toast } from "sonner";
 import { chatSession } from "@/service/AIModal";
@@ -36,10 +38,13 @@ function CreateTrip() {
     noOfDays: "",
   });
 
-  const handleInputChange = useCallback((key: string, value: string) => {
-    if (parseInt(formData.noOfDays) > 5) return;
-    setFormData((prevData) => ({ ...prevData, [key]: value }));
-  }, [formData.noOfDays]);
+  const handleInputChange = useCallback(
+    (key: string, value: string) => {
+      if (parseInt(formData.noOfDays) > 5) return;
+      setFormData((prevData) => ({ ...prevData, [key]: value }));
+    },
+    [formData.noOfDays]
+  );
 
   const navigate = useNavigate();
 
@@ -131,10 +136,12 @@ function CreateTrip() {
             What is your destination of choice?
           </h2>
           <div>
-          <Suspense fallback={<Loader />}>
-            <CityDataWrapper searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm} />
-          </Suspense>
+            <Suspense fallback={<Loader />}>
+              <CityDataWrapper
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
+            </Suspense>
           </div>
         </div>
         <div>
@@ -197,7 +204,7 @@ function CreateTrip() {
           )}
         </Button>
       </div>
-      <Dialog open={openDialog}>
+      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogDescription>

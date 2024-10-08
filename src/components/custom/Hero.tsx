@@ -10,7 +10,7 @@ function Hero() {
         </span>
         Personalised Itineraries at Your Fingertips
       </h1>
-      <p className="text-xl text-gray-500 text-center  ">
+      <p className="text-xl text-gray-500 text-center">
         Your Personal trip planner and travel curator, creating custom
         itineraries tailored to your interests and hobbies.
       </p>
