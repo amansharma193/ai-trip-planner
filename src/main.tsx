@@ -1,14 +1,11 @@
 import { StrictMode, Suspense, lazy } from "react";
 import { createRoot } from "react-dom/client";
-// import App from "./App.tsx";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-// import CreateTrip from "./create-trip/index.tsx";
 import Header from "./components/custom/Header.tsx";
 import { Toaster } from "@/components/ui/sonner";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-// import ViewTrip from "./view-trip/[tripId]/index.tsx";
-// import MyTrips from "./my-trips/index.tsx";
+import Loader from "./components/custom/Loader.tsx";
 
 const MyTrips = lazy(() => import("./my-trips/index.tsx"));
 const ViewTrip = lazy(() => import("./view-trip/[tripId]/index.tsx"));
@@ -17,22 +14,22 @@ const App = lazy(() => import("./App.tsx"));
 
 const router = createBrowserRouter([
   { path: "/", element: (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Loader />}>
       <App />
     </Suspense>
   ) },
   { path: "/create-trip", element: (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Loader />}>
       <CreateTrip />
     </Suspense>
   ) },
   { path: "/view-trip/:tripId", element: (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Loader />}>
       <ViewTrip />
     </Suspense>
   ) },
   { path: "/my-trips", element: (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Loader />}>
       <MyTrips />
     </Suspense>
   ) },
