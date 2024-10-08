@@ -25,9 +25,4 @@ Check it out here:
 🔗 **Live App**: [GLOBAL_TOUR_PLANNER](https://globaltourplanner.vercel.app/)
 
 Happy travels! ✈️💼
-
-## Hashtags
-
-#GlobalTripPlanner #AITripPlanner #HotelRecommendations #TravelSmart #TravelAI #ItineraryMadeEasy #BudgetTravel #SoloTravel #FamilyTravel #FriendsTravel #React #Vite #Shadcn #GoogleAuth #Firebase #GeminiAI #FreeToUse #Vercel #TravelPlanning #TechInnovation #TravelWithEase
-
 ![Global Trip Planner Logo](https://github.com/amansharma193/ai-trip-planner/blob/master/public/landing.png?raw=true)
