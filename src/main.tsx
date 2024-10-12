@@ -5,13 +5,12 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import Header from "./components/custom/Header.tsx";
 import Loader from "./components/custom/Loader.tsx";
 import { Toaster } from "@/components/ui/sonner";
-
 import "./index.css";
+import CreateTrip from "./create-trip/index.tsx";
+import App from "./App.tsx";
+import ViewTrip from "./view-trip/[tripId]/index.tsx";
 
 const MyTrips = lazy(() => import("./my-trips/index.tsx"));
-const ViewTrip = lazy(() => import("./view-trip/[tripId]/index.tsx"));
-const CreateTrip = lazy(() => import("./create-trip/index.tsx"));
-const App = lazy(() => import("./App.tsx"));
 
 const routes = [
   {

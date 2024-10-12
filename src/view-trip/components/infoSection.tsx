@@ -1,17 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { GetPlaceDetails, PHOTO_REF_URL } from "@/service/GlobalAPI";
 import { Trip } from "@/types/types";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { IoIosSend } from "react-icons/io";
 
 function InfoSection({ trip }: { trip: Trip | undefined }) {
-  useEffect(() => {
-    if (trip) GetPlacePhotos();
-  }, [trip]);
-
-  const [photoUrl, setPhotoUrl] = useState("");
-
-  const GetPlacePhotos = async () => {
+  const GetPlacePhotos = useCallback(async () => {
     const data = {
       textQuery: trip?.userSelection?.location,
     };
@@ -25,7 +19,12 @@ function InfoSection({ trip }: { trip: Trip | undefined }) {
         setPhotoUrl(PhotoUrl);
       })
       .catch((e) => console.log("error: ", e));
-  };
+  }, [trip?.userSelection?.location]);
+  useEffect(() => {
+    if (trip) GetPlacePhotos();
+  }, [GetPlacePhotos, trip]);
+
+  const [photoUrl, setPhotoUrl] = useState("");
 
   return (
     <div>

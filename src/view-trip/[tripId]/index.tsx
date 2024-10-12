@@ -1,4 +1,4 @@
-import { db } from "@/service/FirebaseConfig";
+import { firestore } from "@/service/FirebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -13,7 +13,7 @@ const ViewTrip = () => {
   const { tripId } = useParams();
   const [trip, setTrip] = useState<Trip>();
   const getTripData = useCallback(async () => {
-    const docRef = await doc(db, "AITrips", tripId || "");
+    const docRef = await doc(firestore, "AITrips", tripId || "");
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       setTrip(docSnap.data() as Trip);
@@ -24,7 +24,7 @@ const ViewTrip = () => {
   }, [tripId]);
   useEffect(() => {
     getTripData();
-  }, [tripId]);
+  }, [getTripData, tripId]);
 
   return (
     <div className="p-10 md:px-20 lg:px-44 xl:px-56 ">

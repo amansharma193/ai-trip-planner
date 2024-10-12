@@ -22,7 +22,8 @@ import { FcGoogle } from "react-icons/fc";
 import { TokenResponse, useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { doc, setDoc } from "firebase/firestore";
-import { db } from "@/service/FirebaseConfig";
+import { firestore } from "@/service/FirebaseConfig";
+
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import Loader from "@/components/custom/Loader";
@@ -48,7 +49,10 @@ const CreateTrip = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => handleInputChange("location", searchTerm), [searchTerm]);
+  useEffect(
+    () => handleInputChange("location", searchTerm),
+    [handleInputChange, searchTerm]
+  );
 
   const onGenerateTrip = async () => {
     const user = localStorage.getItem("user");
@@ -106,7 +110,7 @@ const CreateTrip = () => {
     const docId: string = Date.now().toString();
     const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-    await setDoc(doc(db, "AITrips", docId), {
+    await setDoc(doc(firestore, "AITrips", docId), {
       userSelection: formData,
       tripData: JSON.parse(tripData),
       userEmail: user.email,
