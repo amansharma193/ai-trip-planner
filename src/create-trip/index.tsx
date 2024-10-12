@@ -48,8 +48,6 @@ const CreateTrip = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => console.log("data form ", formData), [formData]);
-
   useEffect(() => handleInputChange("location", searchTerm), [searchTerm]);
 
   const onGenerateTrip = async () => {
@@ -73,11 +71,8 @@ const CreateTrip = () => {
       .replace("{budget}", formData.budget)
       .replace("{traveler}", formData.travellers);
 
-    console.log(FINAL_PROMPT);
-
     const result = await chatSession.sendMessage(FINAL_PROMPT);
     const tripData = result.response.text();
-    console.log("result -< ", tripData);
     setLoading(false);
     saveAITrip(tripData);
   };
@@ -98,7 +93,6 @@ const CreateTrip = () => {
         }
       );
 
-      console.log(response);
       localStorage.setItem("user", JSON.stringify(response.data));
       setOpenDialog(false);
       onGenerateTrip();

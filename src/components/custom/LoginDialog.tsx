@@ -37,7 +37,6 @@ function LoginDialog({
         }
       )
       .then((resp) => {
-        console.log(resp);
         localStorage.setItem("user", JSON.stringify(resp.data));
         setOpenDialog(false);
         setIsProcessing(true);

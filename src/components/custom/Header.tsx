@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "../ui/button";
 import {
   Popover,
@@ -22,7 +22,6 @@ import axios from "axios";
 function Header() {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const [openDialog, setOpenDialog] = useState(false);
-  useEffect(() => console.log("userData ", user), [user]);
   const logout = () => {
     googleLogout();
     localStorage.removeItem("user");
@@ -46,7 +45,6 @@ function Header() {
         }
       )
       .then((resp) => {
-        console.log(resp);
         localStorage.setItem("user", JSON.stringify(resp.data));
         setOpenDialog(false);
       })

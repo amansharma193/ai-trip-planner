@@ -16,7 +16,6 @@ const ViewTrip = () => {
     const docRef = await doc(db, "AITrips", tripId || "");
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-      console.log("snapdata", docSnap.data());
       setTrip(docSnap.data() as Trip);
     } else {
       console.log("No trip Found");
@@ -24,7 +23,6 @@ const ViewTrip = () => {
     }
   }, [tripId]);
   useEffect(() => {
-    console.log("tripId ", tripId);
     getTripData();
   }, [tripId]);
 

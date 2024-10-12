@@ -17,14 +17,12 @@ function InfoSection({ trip }: { trip: Trip | undefined }) {
     };
     await GetPlaceDetails(data)
       .then((resp) => {
-        console.log("resp ", resp.data, PHOTO_REF_URL);
         const PhotoUrl = PHOTO_REF_URL.replace(
           "{NAME}",
           resp.data.places[0].photos[3].name
         );
 
         setPhotoUrl(PhotoUrl);
-        console.log(PhotoUrl);
       })
       .catch((e) => console.log("error: ", e));
   };
