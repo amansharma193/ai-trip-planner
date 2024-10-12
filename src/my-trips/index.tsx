@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UserTripCard from "./components/UserTripCard";
 
-function MyTrips() {
+const MyTrips = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const navigate = useNavigate();
   const [userTrips, setUserTrips] = useState<Trip[]>([]);
@@ -46,6 +46,6 @@ function MyTrips() {
       </div>
     </div>
   );
-}
+};
 
 export default MyTrips;

@@ -27,7 +27,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import Loader from "@/components/custom/Loader";
 
-function CreateTrip() {
+const CreateTrip = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -76,18 +76,19 @@ function CreateTrip() {
     console.log(FINAL_PROMPT);
 
     const result = await chatSession.sendMessage(FINAL_PROMPT);
-    console.log("result -< ", result.response.text());
+    const tripData = result.response.text();
+    console.log("result -< ", tripData);
     setLoading(false);
-    saveAITrip(result.response.text());
+    saveAITrip(tripData);
   };
   const logIn = useGoogleLogin({
     onSuccess: (codeResp) => getUserProfile(codeResp),
     onError: (error) => console.log(error),
   });
 
-  const getUserProfile = (tokenInfo: TokenResponse) => {
-    axios
-      .get(
+  const getUserProfile = async (tokenInfo: TokenResponse) => {
+    try {
+      const response = await axios.get(
         `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenInfo.access_token}`,
         {
           headers: {
@@ -95,14 +96,15 @@ function CreateTrip() {
             Accept: "application/json",
           },
         }
-      )
-      .then((resp) => {
-        console.log(resp);
-        localStorage.setItem("user", JSON.stringify(resp.data));
-        setOpenDialog(false);
-        onGenerateTrip();
-      })
-      .catch((e) => console.log(`Error : ${e}`));
+      );
+
+      console.log(response);
+      localStorage.setItem("user", JSON.stringify(response.data));
+      setOpenDialog(false);
+      onGenerateTrip();
+    } catch (e) {
+      console.log(`Error: ${e}`);
+    }
   };
 
   const saveAITrip = async (tripData: string) => {
@@ -223,6 +225,6 @@ function CreateTrip() {
       </Dialog>
     </div>
   );
-}
+};
 
 export default CreateTrip;

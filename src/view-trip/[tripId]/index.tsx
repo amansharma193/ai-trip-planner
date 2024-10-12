@@ -9,7 +9,7 @@ import { Trip } from "@/types/types";
 import PlacesToVisit from "../components/PlacesToVisit";
 import Footer from "../components/Footer";
 
-function ViewTrip() {
+const ViewTrip = () => {
   const { tripId } = useParams();
   const [trip, setTrip] = useState<Trip>();
   const getTripData = useCallback(async () => {
@@ -36,6 +36,6 @@ function ViewTrip() {
       <Footer />
     </div>
   );
-}
+};
 
 export default ViewTrip;
